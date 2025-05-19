@@ -15,7 +15,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import resample
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import OneHotEncoder,  StandardScaler
 from sklearn.metrics import (
@@ -131,14 +131,14 @@ def train(X_train, y_train):
     Returns:
         LogisticRegression: trained logistic regression model
     """
-    model = RandomForestClassifier()
+    model = SVC()
     model.fit(X_train, y_train)
 
     ### Log the model with the input and output schema
     # Infer signature (input and output schema)
     signature = infer_signature(X_train, model.predict(X_train))
     # Log model
-    mlflow.sklearn.log_model(model, "Random_forest", signature=signature)
+    mlflow.sklearn.log_model(model, "Support Vector Classifier", signature=signature)
     ### Log the data
     sample_data = X_train[:5].copy()
     sample_data['target'] = y_train[:5].reset_index(drop=True)
@@ -152,7 +152,7 @@ def train(X_train, y_train):
 
 def main():
 
-    model_name  = "Random Forest"
+    model_name  = "Support Vector Classifier"
     os.environ['LOGNAME'] = 'Ahmed'
     
     ### Set the tracking URI for MLflow
