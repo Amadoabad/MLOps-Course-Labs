@@ -8,6 +8,7 @@ import mlflow
 import mlflow.sklearn
 from mlflow.models.signature import infer_signature
 
+import logging
 import joblib
 import os
 
@@ -26,6 +27,19 @@ from sklearn.metrics import (
     confusion_matrix,
     ConfusionMatrixDisplay,
 )
+
+### Configuring Logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s — %(levelname)s — %(message)s",
+    handlers=[
+        logging.FileHandler("training.log"),
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
 
 ### Import MLflow
 
@@ -102,11 +116,15 @@ def preprocess(df):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=1912
     )
+    
+    logger.info("Data splitted successfully!")
+    
     col_transf = make_column_transformer(
         (StandardScaler(), num_cols), 
         (OneHotEncoder(handle_unknown="ignore", drop="first"), cat_cols),
         remainder="passthrough",
     )
+    
 
     X_train = col_transf.fit_transform(X_train)
     X_train = pd.DataFrame(X_train, columns=col_transf.get_feature_names_out())
@@ -114,9 +132,15 @@ def preprocess(df):
     X_test = col_transf.transform(X_test)
     X_test = pd.DataFrame(X_test, columns=col_transf.get_feature_names_out())
 
+    logger.info("Applied StandardScaler + OneHotEncoder successfully!")
+    
     # Log the transformer as an artifact
+    logger.info("Saving the transformer...")
+    
     joblib.dump(col_transf, "col_transformer.pkl")
     mlflow.log_artifact("col_transformer.pkl")
+    
+    logger.info("Transformer saved successfully!")
     return col_transf, X_train, X_test, y_train, y_test
 
 
@@ -132,6 +156,7 @@ def train(X_train, y_train):
         LogisticRegression: trained logistic regression model
     """
     model = SVC()
+    
     model.fit(X_train, y_train)
 
     ### Log the model with the input and output schema
@@ -156,6 +181,7 @@ def main():
     os.environ['LOGNAME'] = 'Ahmed'
     
     ### Set the tracking URI for MLflow
+    logger.info("Setting the tracking uri!")
     mlflow.set_tracking_uri(r'http://localhost:5000')
     ### Set the experiment name
     mlflow.set_experiment("Bank Customer Churn Prediction")
@@ -165,7 +191,9 @@ def main():
         df = pd.read_csv("dataset/Churn_Modelling.csv")
         col_transf, X_train, X_test, y_train, y_test = preprocess(df)
 
+        logger.info("Fitting the model...")
         model = train(X_train, y_train)
+        logger.info("Fitted the model!")
 
         ### Log the max_iter parameter
         # mlflow.log_param("max_iter", 1000)
@@ -174,7 +202,9 @@ def main():
         for param_name, param_value in model.get_params().items():
             mlflow.log_param(param_name, param_value)
 
+        logger.info("Predicting values...")
         y_pred = model.predict(X_test)
+        logger.info("Predicted values Successfully...")
 
         ### Log metrics after calculating them
 
@@ -198,7 +228,7 @@ def main():
             confusion_matrix=conf_mat, display_labels=model.classes_
         )
         conf_mat_disp.plot()
-        
+        plt.title('Support Vector Classifier')
         # Log the image as an artifact in MLflow
         plt.savefig("confusion_matrix.png")
         mlflow.log_artifact('confusion_matrix.png')
