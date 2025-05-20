@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/780246852331963702/6aa5235318e249399153b77351d8fdfc/artifacts
+end_time: 1747665867272
+entry_point_name: ''
+experiment_id: '780246852331963702'
+lifecycle_stage: active
+run_id: 6aa5235318e249399153b77351d8fdfc
+run_name: Support Vector Classifier
+run_uuid: 6aa5235318e249399153b77351d8fdfc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747665860992
+status: 3
+tags: []
+user_id: Ahmed

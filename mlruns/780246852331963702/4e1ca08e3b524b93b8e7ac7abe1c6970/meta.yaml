@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/780246852331963702/4e1ca08e3b524b93b8e7ac7abe1c6970/artifacts
+deleted_time: 1747663341704
+end_time: 1747663155927
+entry_point_name: ''
+experiment_id: '780246852331963702'
+lifecycle_stage: deleted
+run_id: 4e1ca08e3b524b93b8e7ac7abe1c6970
+run_name: LogisticRegression
+run_uuid: 4e1ca08e3b524b93b8e7ac7abe1c6970
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747663155911
+status: 4
+tags: []
+user_id: Ahmed
