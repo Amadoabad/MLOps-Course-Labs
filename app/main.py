@@ -80,7 +80,7 @@ def predict(input:  InputData):
         
         logger.info(f"Prediction: {prediction}")
         
-        return {"prediciton": int(prediction[0])}
+        return {"prediction": int(prediction[0])}
     
     except Exception as e:
         logger.error(f"Prediciton failed: {e}")
