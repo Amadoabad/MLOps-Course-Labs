@@ -172,6 +172,10 @@ def train(X_train, y_train):
     sample_data.to_csv(sample_path,index=False)
     mlflow.log_artifact(sample_path,  artifact_path="data_sample")
     
+    logger.info("Saving the Model to 'model.pkl...")
+    joblib.dump(model, "model.pkl")
+    logger.info("Done Saving the Model!")
+    
     return model
 
 
