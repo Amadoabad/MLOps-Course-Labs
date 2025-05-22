@@ -6,6 +6,7 @@ import pandas as pd
 from fastapi import FastAPI,HTTPException
 from pydantic import BaseModel
 from typing import Literal
+from prometheus_fastapi_instrumentator import Instrumentator, metrics
 
 
 logging.basicConfig(
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+Instrumentator().instrument(app).expose(app, include_in_schema=False, should_gzip=True)
 
 def load_model_and_transformer(model_path, transformer_path):
     if not os.path.exists(model_path):
@@ -35,7 +37,7 @@ def load_model_and_transformer(model_path, transformer_path):
     
     return model, transformer
 
-model, transformer = load_model_and_transformer("model.pkl", "col_transformer.pkl")
+model, transformer = load_model_and_transformer(r"pickles/model.pkl", r"pickles/col_transformer.pkl")
 cols = ["CreditScore", "Geography", "Gender", "Age", 
         "Tenure", "Balance", "NumOfProducts", "HasCrCard", 
         "IsActiveMember", "EstimatedSalary",
@@ -88,5 +90,5 @@ def predict(input:  InputData):
     
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
         
